@@ -1,0 +1,16 @@
+TRABALHO OC - Colônia de Formigas + Caixeiro Viajante.
+--Input-:
+	* Arquivo .txt com o n° de vértices do grafo + lista de adjacências
+	* Daí pega esse n°, cria uma matriz e coloca nela os pesos de cada conexao
+		* Conexões "implícitas": Se tem um numero numa coluna N e linha M:
+								* Vai ser a distancia da cidade N pra cidade M
+
+--Funcionamento-:
+	* Primeiro, vamos ter que receber o input e transformar ele numa matriz
+	* Pra ficar + facil de visualizar, dá pra matriz começar em 1, em vez de 0
+	* Daí teremos outra matriz igual, com os feromônios
+	* Dai a formiga tá num vertice: Ela olha a linha/coluna dela, cheira os
+	feromônios, e faz o cálculo lá pra decidir aonde vai (e solta mais cheiro)
+	* E com o tempo diferentes vértices vao ter diferentes feromônios
+	* E em toda iteração passamos pela matriz 2 para decair os feromônios
+	* Depois de x iterações é pra termos a melhor solução
