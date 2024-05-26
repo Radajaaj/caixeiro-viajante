@@ -9,8 +9,8 @@ class Formiga:
         self.solucao.append(partida)
         self.custo = 0
     @staticmethod
-    def evaporaferomonio(matrizflinha, matrizfauxlinha):
-        print('ToDo')
+    def evaporaferomonio(matrizflinha, matrizfauxlinha): #so percebi depois de commitar, mas isso tem que ser uma fução
+        print('ToDo')                                    #normal e não um metodo da classe formiga    
 
     @staticmethod
     def addferomonio(self, matrizflinha,matrizfauxlinha):
