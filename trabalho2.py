@@ -33,10 +33,13 @@ class Formiga:
         if not bool(possiveis): #no python, se uma lista está vazia ela é considerada false
                 if len(self.solucao) < 10:  #nada elegante, mas garante que todos os nos são visitadas
                     self.solucao = [0]  #reseta a solução, volta a ponto de partida e tenta de novo
-                    self.custo = 0
-                    return 0
+                    self.custo = 0      #vai ser um problema quando tivermos o feromonio implementado, pois quando chega nesse
+                    return 0            #ponto a formiga ja visitou muitos nos e ja depositou feromonio
                 else:
-                    return "finished"
+                    return "finished"   #eu penso em criar mais uma matriz que salva os feromonios antes de uma formiga
+                                        #percorrer o grafo e, se der errado, reseta a matriz feromonio
+                  
+                
         else:
             selecionado = random.choices(possiveis, weights=probabilidades, k=1)
             self.solucao.append(selecionado[0])  #random.choices retorna uma lista de 1 posição
