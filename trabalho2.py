@@ -7,6 +7,7 @@ class Formiga:
         self.id = num
         self.solucao =[]
         self.solucao.append(partida)
+        self.custo = 0
     @staticmethod
     def evaporaferomonio(matrizflinha, matrizfauxlinha):
         print('ToDo')
@@ -19,27 +20,37 @@ class Formiga:
     def calcularota(self, matrizdlinha, matrizflinha):
         probabilidades = []
         possiveis = []
-        for i in matrizdlinha:
+        for i in range(len(matrizdlinha)):
             if i not in self.solucao:
-                if i > 0:
+                if matrizdlinha[i] > 0:
                     possiveis.append(i)  #nó possivel é adicionado a lista de nós possíveis
-                    probabilidades.append(self.calculaprob(self, i, 1, matrizdlinha, matrizflinha))
-                    """"" 
-                    acho que não é a melhor maneira de fazer isso, mas precisamos saber quais nós foram selecionados 
-                    e temos que saber associar a probabilidade a esse nó, essa foi a maneira que consegui pensar"""
-        selecionado = random.choices(possiveis, weights=probabilidades, k=1)
-        self.solucao.append(selecionado)
-        return selecionado
+        i=0
+        for i in range(len(possiveis)): #percorre a lista de nós possiveis e calcula as probabilidades
+            probabilidades.append(self.calculaprob(self, possiveis[i], 1, matrizdlinha, matrizflinha))
+            # acho que não é a melhor maneira de fazer isso, mas precisamos saber quais nós foram selecionados
+            # e temos que saber associar a probabilidade a esse nó, essa foi a maneira que consegui pensar
+
+        if not bool(possiveis): #no python, se uma lista está vazia ela é considerada false
+                if len(self.solucao) < 10:  #nada elegante, mas garante que todos os nos são visitadas
+                    self.solucao = [0]  #reseta a solução, volta a ponto de partida e tenta de novo
+                    self.custo = 0
+                    return 0
+                else:
+                    return "finished"
+        else:
+            selecionado = random.choices(possiveis, weights=probabilidades, k=1)
+            self.solucao.append(selecionado[0])  #random.choices retorna uma lista de 1 posição
+            self.custo += matrizdlinha[selecionado[0]]  #acha na matriz de distância o indice do nó selecionado, e soma o custo
+            return selecionado[0]
 
     @staticmethod
     def calculaprob(self, s, b, matrizdlinha, matrizflinha):
         """
         r = indice do nó atual
-        s = nó destino
+        s = indice do nó destino
         b = peso do feromônio
         matrizdlinha = linha de indice r da matriz de distância
         matrizflinha = linha de indice r da matriz de feromônio
-        visitadas = lista nós já visitados pela formiga
         """
         somad = 0
         somaf = 0
@@ -50,17 +61,17 @@ class Formiga:
         todos os pontos acessíveis de r, tudo isso elevado a b
         retorna probabilidade da formiga escolher escolher a rota vindo de r indo para s
         """
-        for i in range(0, len(matrizdlinha)):  #fazer os somatorios
-            if matrizdlinha[i] > 0 & i not in self.solucao:  #até achar um valor > 0 que não foi visitado
-                somad += 1 / matrizdlinha[i]  #se encontrar, adiciona 1/d no somatorio
-                somaf += matrizflinha[i]  #adiciona o feromonio ao somatorio tambem
+        for i in range( len(matrizdlinha)):  #fazer os somatorios
+            if matrizdlinha[i] > 0:
+                if i not in self.solucao:  #até achar um valor > 0 que não foi visitado
+                    somad = somad + 1 / matrizdlinha[i]  #se encontrar, adiciona 1/d no somatorio
+                    somaf = somaf + matrizflinha[i]  #adiciona o feromonio ao somatorio tambem
         probabilidade = pow((matrizflinha[s] * (1 / matrizdlinha[s])), b) / pow(somad * somaf, b)
         return probabilidade
 
 
 def inicializamatrizes(n, matriz, matrizferomonio):
-    listaaux = []
-    lista = []  # auxiliar para passar os valores para a matriz
+    listaaux = [] # auxiliar para passar os valores para a matriz
     for i in range(n):  # for para inicializar matrizes
         estring = f.readline()  # readline retorna uma string
         lista = [int(ele) for ele in estring.split()]
@@ -75,12 +86,15 @@ n = f.readline()  #tamanho da matriz
 n = int(n)
 matriz = []
 matrizferomonio = []
-ini=inicializamatrizes(n, matriz, matrizferomonio)
+ini=inicializamatrizes(n, matriz, matrizferomonio) #tamanho da matriz, matriz distancia e matriz feromonio
 matriz = ini[0]
 matrizferomonio = ini[1]
 matrizferomonioaux = matrizferomonio
-testelinhamatriz = matriz[1]
-testelinhamatrizf = matrizferomonio[1]
-Formiga1 = Formiga(1, 1)
-Formiga1.calcularota(Formiga1, matriz[1], matrizferomonio[1])
+Formiga1 = Formiga(0, 1) #instanciamos uma formiga, com ponto de partida no nó 0 e a id 1
+atual = 0
+prox = 0
+while prox!="finished":
+    prox = Formiga1.calcularota(Formiga1, matriz[atual], matrizferomonio[atual]) #(instancia da formiga, ponto de partida, feromonio do ponto de partida)
+    atual = prox
 print(Formiga1.solucao)
+print(Formiga1.custo)
