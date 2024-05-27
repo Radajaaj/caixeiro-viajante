@@ -10,7 +10,7 @@ class Formiga:
         self.solucao.append(partida)
         self.custo = 0
     @staticmethod
-    def evaporaferomonio(matrizflinha, matrizfauxlinha):
+    def evaporaferomonio(matrizflinha, matrizfauxlinha):  #isso deve ser uma função no escopo externo e não um metodo da classe formiga.
         print('ToDo')
 
     @staticmethod
