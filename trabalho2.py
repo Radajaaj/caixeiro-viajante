@@ -1,16 +1,17 @@
 
 import random
-
+Numeronos = 10
 
 class Formiga:
     def __init__(self, partida, num):
         self.id = num
         self.solucao =[]
+        self.visitados=[]
         self.solucao.append(partida)
         self.custo = 0
     @staticmethod
-    def evaporaferomonio(matrizflinha, matrizfauxlinha): #so percebi depois de commitar, mas isso tem que ser uma fução
-        print('ToDo')                                    #normal e não um metodo da classe formiga    
+    def evaporaferomonio(matrizflinha, matrizfauxlinha):
+        print('ToDo')
 
     @staticmethod
     def addferomonio(self, matrizflinha,matrizfauxlinha):
@@ -21,7 +22,7 @@ class Formiga:
         probabilidades = []
         possiveis = []
         for i in range(len(matrizdlinha)):
-            if i not in self.solucao:
+            if i not in self.visitados:
                 if matrizdlinha[i] > 0:
                     possiveis.append(i)  #nó possivel é adicionado a lista de nós possíveis
         i=0
@@ -31,18 +32,17 @@ class Formiga:
             # e temos que saber associar a probabilidade a esse nó, essa foi a maneira que consegui pensar
 
         if not bool(possiveis): #no python, se uma lista está vazia ela é considerada false
-                if len(self.solucao) < 10:  #nada elegante, mas garante que todos os nos são visitadas
-                    self.solucao = [0]  #reseta a solução, volta a ponto de partida e tenta de novo
-                    self.custo = 0      #vai ser um problema quando tivermos o feromonio implementado, pois quando chega nesse
-                    return 0            #ponto a formiga ja visitou muitos nos e ja depositou feromonio
+                if (len(self.solucao) != Numeronos) or (self.solucao[0] != self.solucao[len(self.solucao)-1]):  #nada elegante, mas garante que todos os nos são visitadas
+                    self.solucao = [partida]
+                    self.visitados = [] #reseta a solução, volta a ponto de partida e tenta de novo
+                    self.custo = 0
+                    return 0
                 else:
-                    return "finished"   #eu penso em criar mais uma matriz que salva os feromonios antes de uma formiga
-                                        #percorrer o grafo e, se der errado, reseta a matriz feromonio
-                  
-                
+                    return "finished"
         else:
             selecionado = random.choices(possiveis, weights=probabilidades, k=1)
-            self.solucao.append(selecionado[0])  #random.choices retorna uma lista de 1 posição
+            self.solucao.append(selecionado[0])
+            self.visitados.append(selecionado[0])  #random.choices retorna uma lista de 1 posição
             self.custo += matrizdlinha[selecionado[0]]  #acha na matriz de distância o indice do nó selecionado, e soma o custo
             return selecionado[0]
 
@@ -66,7 +66,7 @@ class Formiga:
         """
         for i in range( len(matrizdlinha)):  #fazer os somatorios
             if matrizdlinha[i] > 0:
-                if i not in self.solucao:  #até achar um valor > 0 que não foi visitado
+                if i not in self.visitados:  #até achar um valor > 0 que não foi visitado
                     somad = somad + 1 / matrizdlinha[i]  #se encontrar, adiciona 1/d no somatorio
                     somaf = somaf + matrizflinha[i]  #adiciona o feromonio ao somatorio tambem
         probabilidade = pow((matrizflinha[s] * (1 / matrizdlinha[s])), b) / pow(somad * somaf, b)
@@ -93,11 +93,13 @@ ini=inicializamatrizes(n, matriz, matrizferomonio) #tamanho da matriz, matriz di
 matriz = ini[0]
 matrizferomonio = ini[1]
 matrizferomonioaux = matrizferomonio
-Formiga1 = Formiga(0, 1) #instanciamos uma formiga, com ponto de partida no nó 0 e a id 1
-atual = 0
+partida = 4
+Formiga1 = Formiga(partida, 1) #instanciamos uma formiga, com ponto de partida no nó 0 e a id 1
+atual = partida
 prox = 0
 while prox!="finished":
     prox = Formiga1.calcularota(Formiga1, matriz[atual], matrizferomonio[atual]) #(instancia da formiga, ponto de partida, feromonio do ponto de partida)
     atual = prox
+print(Formiga1.visitados)
 print(Formiga1.solucao)
 print(Formiga1.custo)
