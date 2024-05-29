@@ -50,9 +50,8 @@ Feromônios depositados:
 
 
 Atualizacao matriz de feromonios:
-                (1 - σ) * 𝜏𝑖,𝑗 (t-1) + soma[∆𝜏𝑖,𝑗 (t)]
-    𝜏𝑖,𝑗 (t) = --------------
-    
+    𝜏𝑖,𝑗 (t)  =  (1 - σ) * 𝜏𝑖,𝑗 (t-1) + soma[∆𝜏𝑖,𝑗 (t)]
+
     𝜏𝑖,𝑗 (t) feromonio presente no caminho i,j após a atualização
     σ       fator de esvaecimento
     𝜏𝑖,𝑗 (t-1) feromonio presente no inicio da iteração atual

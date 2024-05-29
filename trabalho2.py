@@ -10,6 +10,16 @@ matrizIntensidades = []  #Basicamente, vai armazenar o valor de 𝑝𝑖,𝑗(�
                                                     #matriz[y][x] = feromonio tambem, pra ficar simetrico
 
 
+def atualizaFeromonio(matrizFeromonio, feromDepositado, sigma):
+    for i in range(numeroNos):
+        for j in range(numeroNos):
+            matrizFeromonio[i][j] = (((1 - sigma) * matrizFeromonio[i][j]) + (feromDepositado[i][j]))
+
+def feromonioInicial(matrizFeromonio, intensidade, matrizCaminhos): # Insere o feromonio inicial em cada caminho
+    for i in range(numeroNos):
+        for j in range(numeroNos):
+            if matrizCaminhos[i][j] != 0:
+                matrizFeromonio[i][j] = intensidade
 
 def feromonioXintensidade(alpha, beta, feromonio, distancia):
     if distancia == 0:
@@ -50,8 +60,16 @@ class Formiga:
 
     @staticmethod
     def depositaFeromonio(self, feromoniosDepositados, Q):
-        for i in range():
-            rij = (Q / self.custo)
+        saida = self.solucao[0]
+        chegada = self.solucao[1]
+        rij = (Q / self.custo)
+        prox = 2
+        
+        for i in range(numeroNos):
+            saida = self.solucao[i]
+            chegada = self.solucao[i + 1]
+            feromoniosDepositados[saida][chegada] += rij
+            feromoniosDepositados[chegada][saida] += rij
 
     @staticmethod
     def calcularota(self, linhaDistancia, linhaFeromonio, feromDepositado, linhaIntensidades):      # Atualmente, as rotas são calculadas por força bruta. É quase impossível achar uma rota válida para grafos grandes
@@ -74,8 +92,8 @@ class Formiga:
             probabilidades.append(self.calculaprob(self, possiveis[i], 1, linhaDistancia, linhaFeromonio, linhaIntensidades))
             # acho que não é a melhor maneira de fazer isso, mas precisamos saber quais nós foram selecionados
             # e temos que saber associar a probabilidade a esse nó, essa foi a maneira que consegui pensar
-        print("----------Probabilidades eh ---------------")
-        print(probabilidades)
+        #print("----------Probabilidades eh ---------------")
+        #print(probabilidades)
 
         #[------------- Agora escolhemos o próximo node:
         
@@ -102,60 +120,25 @@ class Formiga:
 
     @staticmethod
     def calculaprob(self, destino, b, linhaDistancia, linhaFeromonio, linhaIntensidade):
-        """
-        r = indice do nó atual
-        s = indice do nó destino
-        ij = distancia de r para s
-        b = peso do feromônio
-        nij = fator de visibilidade (1/distancia)
-        alpha = peso da intensidade da trilha
-        beta  = peso da visibilidade da trilha
-        soma  = soma de todas as chances de cada trilha sere escolhida
-        linhaDistancia = linha de indice r da matriz de distância
-        linhaFeromonio = linha de indice r da matriz de feromônio
-        """
-        
-        somad = 0
-        somaf = 0
-        
-        """
-        feromonio entre no atual e s(nó destino) multiplicado por 1/distancia entre os pontos r e s,
-            elevados a alpha e a beta, respectivamente.
-            a função feromonioXintensidade(alpha, beta, feromonio, intensidade) calcula isso
-            
-        isso ai, divido pelo somatorio do feromônio de todos os nós acessíveis de r multiplicado por somatorio de 1/distancia de
-        todos os pontos acessíveis de r, tudo isso elevado a alpha e beta
-        retorna probabilidade da formiga escolher escolher a rota vindo de r indo para s
-        
-        """
-        
         probabilidade = 0
-        probabilidade = linhaIntensidade[destino] / linhaIntensidade[-1]
+        probabilidade = linhaIntensidade[destino] / linhaIntensidade[-1]    # Já calculamos 𝑝𝑖,𝑗(𝑡) antes. Então só fazemos a roleta com ele
+                                                                                # Σ 𝑝𝑖,𝑗(𝑡) está em linhaIntensidade[-1]
         #print("|||||||||| Aqui em calcprob ||||||||||")
         #print(linhaIntensidade[destino])
         #print(linhaIntensidade[-1])
         #print(probabilidade)
         return probabilidade
-        
-        
-        #for i in range(len(linhaDistancia)):  #fazer os somatorios
-        #    if linhaDistancia[i] > 0:
-        #        if i not in self.visitados:  #até achar um valor > 0 que não foi visitado
-        #            somad = somad + 1 / linhaDistancia[i]  #se encontrar, adiciona 1/d no somatorio
-        #            somaf = somaf + linhaFeromonio[i]  #adiciona o feromonio ao somatorio tambem
-        #probabilidade = pow((linhaFeromonio[s] * (1 / linhaDistancia[s])), b) / pow(somad * somaf, b)
-        #return probabilidade
 
 
-def inicializamatrizes(n, matriz, matrizFeromonio):             
-    listaaux = [] # auxiliar para passar os valores para a matriz
+def inicializamatrizes(n, matriz):             
+    #listaaux = [] # auxiliar para passar os valores para a matriz
     for i in range(n):  # for para inicializar matrizes
         estring = f.readline()  # readline retorna uma string
         lista = [int(ele) for ele in estring.split()]
         matriz.append(lista)  # joga lista para a matriz
-        listaaux.append(1)  # cria uma lista com n 0.1, n sendo o tamanho da linha da matriz
-        matrizFeromonio.append(listaaux)  # joga a lista criada para a matriz de feromonios
-    return matriz, matrizFeromonio
+        #listaaux.append(1)  # cria uma lista com n 0.1, n sendo o tamanho da linha da matriz
+        #matrizFeromonio.append(listaaux)  # joga a lista criada para a matriz de feromonios
+    return matriz
 
 
 
@@ -194,7 +177,7 @@ if op == 1:
 else:
     #[------ Parâmetros genéricos
     f = open("Grafos/Entrada 10.txt", "r")  
-    nFormigas = 1                       # Número de formigas
+    nFormigas = 2                       # Número de formigas
     randomFlag = False
     partida = 0                         # Ponto de partida
     alpha, beta, sigma, Tij, Q = 1, 1, 0.01, 0.1, 10    #Parâmetros
@@ -208,21 +191,26 @@ numeroNos = int(numeroNos)
 print("Temos ", numeroNos, " cidades")
 
 #[------------- Inicializamos as matrizes
+matrizZeros = [[0 for _ in range(numeroNos)] for _ in range(numeroNos)] # Matriz com vários 0's. Usada pra reiniciar matrizes
 matriz = []                             # Armazena a tabela de caminhos do grafo
-matrizFeromonio = []                    # Armazena os feromônios nos caminhos - Usada na decisão entre caminhos
+matrizFeromonio = matrizZeros           # Armazena os feromônios nos caminhos - Usada na decisão entre caminhos
 feromDepositado = []                    # Armazena os feromônios soltos pelas formigas
 
 #[------------- Lemos os conteúdos do arquivo, e colocamos na matriz matriz[][]
-ini = inicializamatrizes(numeroNos, matriz, matrizFeromonio) #tamanho da matriz, matriz distancia e matriz feromonio
-matriz = ini[0]                         # A função retorna duas matrizes: Uma com os conteúdos do arquivo
-matrizFeromonio = ini[1]                # E oura com a intensidade dos feromônios iniciada em 
-feromDepositado = [[0 for _ in range(numeroNos)] for _ in range(numeroNos)] # Inicializamos ela em 0
+matriz = inicializamatrizes(numeroNos, matriz) #tamanho da matriz, matriz distancia
+
+#[------------- Calculamos o feromônio inicial de cada caminho
+intensidadeInicial = 100 / (numeroNos * numeroNos) # Dividimos 100 unidades de feromônios pela matriz de feromônio inicial
+feromonioInicial(matrizFeromonio, intensidadeInicial, matriz)
+feromDepositado = matrizZeros           # Inicializamos ela em 0
+
 
 melhorSolucao = []
 melhorDistancia = float('inf')
 
 #[------------- Loop de execução do algoritmo:
 for i in range(iteracoes):
+    feromDepositado = matrizZeros
     
     matrizIntensidades = []  # Removemos os valores da lista de intensidades
     for j in range(numeroNos):  # E calculamos 𝑝𝑖,𝑗(𝑡) para cada caminho
@@ -264,8 +252,8 @@ for i in range(iteracoes):
                 limite = 0
                 partida = random.randint(0, numeroNos - 1)   # Se a formiguinha se demorar demais num ponto de saída, ela vai tentar começar por outro
             else:
-                print("Foi 5 -------------- Já escolhemos o caminho:")
-                print(formiguinha.solucao)
+                #print("Foi 5 -------------- Já escolhemos o caminho:")
+                #print(formiguinha.solucao)
                 limite += 1
             
         #[----- Formiguinha completou sua viagem
@@ -273,12 +261,20 @@ for i in range(iteracoes):
         print(formiguinha.solucao)
         print(formiguinha.custo)
         #[----- Hora de depositar os feromônios da furmiga na matriz feromDepositado[][]
-        #formiguinha.depositaFeromonio(formiguinha, feromDepositado, Q)
+        formiguinha.depositaFeromonio(formiguinha, feromDepositado, Q)
         
         if formiguinha.custo < melhorDistancia:
             melhorDistancia = formiguinha.custo
             melhorSolucao = formiguinha.solucao
-            
+    
+    print("--------Vamos ver os feromonios depositados------------------")
+    for linha in feromDepositado:
+        print(linha)
+    
+    #[----- Todas as furmigas caminharam pelo grafo e depositaram seus feromônios em feromDepositado!
+    atualizaFeromonio(matrizFeromonio, feromDepositado, sigma)
+    
+    
 print("[------ Soluções: ------]")
 print(melhorSolucao)
 print(melhorDistancia)
