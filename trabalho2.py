@@ -49,6 +49,11 @@ class Formiga:
         self.custo = 0              #Custo da solução encontrada pela formiga
 
     @staticmethod
+    def depositaFeromonio(self, feromoniosDepositados, Q):
+        for i in range():
+            rij = (Q / self.custo)
+
+    @staticmethod
     def calcularota(self, linhaDistancia, linhaFeromonio, feromDepositado, linhaIntensidades):      # Atualmente, as rotas são calculadas por força bruta. É quase impossível achar uma rota válida para grafos grandes
         
         #[------------- Inicializamos vetores auxiliares
@@ -76,10 +81,11 @@ class Formiga:
         
         #[--------- Se tivermos caminhado por todo o grafo:
         if not bool(possiveis): # (no python, se uma lista está vazia ela é considerada false)
-            #[--------- Caso a solução atual tenha
-            if (len(self.solucao) != numeroNos) or (self.solucao[0] != self.solucao[len(self.solucao)-1]):  #nada elegante, mas garante que todos os nos são visitadas
-                self.solucao = [partida]
-                self.visitados = [] #reseta a solução, volta a ponto de partida e tenta de novo
+            #[--------- Caso a solução atual tenha nodes repetidos:
+            if (len(self.solucao) != numeroNos + 1) or (self.solucao[0] != self.solucao[-1]):  
+                #[----- Se não foram visitados todos os nós, ou se a origem for diferente do destino,
+                self.solucao = [partida]    # Reseta a solução, volta a ponto de partida e tenta de novo
+                self.visitados = []
                 self.custo = 0
                 return 0
             else:
@@ -262,10 +268,13 @@ for i in range(iteracoes):
                 print(formiguinha.solucao)
                 limite += 1
             
-
-        #print(formiguinha.visitados)
-        #print(formiguinha.solucao)
-        #print(formiguinha.custo)
+        #[----- Formiguinha completou sua viagem
+        print(formiguinha.visitados)
+        print(formiguinha.solucao)
+        print(formiguinha.custo)
+        #[----- Hora de depositar os feromônios da furmiga na matriz feromDepositado[][]
+        #formiguinha.depositaFeromonio(formiguinha, feromDepositado, Q)
+        
         if formiguinha.custo < melhorDistancia:
             melhorDistancia = formiguinha.custo
             melhorSolucao = formiguinha.solucao
