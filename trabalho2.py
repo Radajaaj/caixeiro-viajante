@@ -40,15 +40,6 @@ def somaIntensidades(alpha, beta, linhaFeromonios, linhaDistancia):
     return listaIntensidades
     
 
-def evaporaFeromonio(linhaFeromonio, matrizfauxlinha):  #isso deve ser uma função no #escopo externo e não um metodo da classe formiga.
-    print('ToDo')                                       #Func que vai evaporar o #feromonio da matriz
-
-def addFeromonio(self, linhaFeromonio,matrizfauxlinha):   #Feromonio é soltado pela #formiga na linhaFeromonio
-    print('ToDo')
-
-
-
-
 #Classe formiga. Para cada nova formiga, será necessário instanciar uma nova classe
 class Formiga:
     def __init__(self, partida, num):   #"Parâmetros privados"
@@ -116,6 +107,10 @@ class Formiga:
             self.solucao.append(novoNode)       # Colocamos o node selecionado na lista solução e visitados
             self.visitados.append(novoNode)     # random.choices retorna uma lista de 1 posição, por isso o [0]
             self.custo += linhaDistancia[novoNode]  #acha na matriz de distância o indice do nó selecionado, e soma o custo
+            
+            #print("--- Seus pesos sao ", probabilidades)
+            #print("--- E ela escolheu ", novoNode)
+            
             return novoNode                 # Retorna o node escolhido
 
     @staticmethod
@@ -180,9 +175,9 @@ else:
     nFormigas = 2                       # Número de formigas
     randomFlag = True
     partida = 0                         # Ponto de partida
-    alpha, beta, sigma, Q = 1, 1, 0.01, 10    #Parâmetros
-    convPrematura = 500                  # Num máximo de soluções repetidas
-    iteracoes = 200
+    alpha, beta, sigma, Q = 2, 1, 0.1, 10    #Parâmetros
+    convPrematura = 100                  # Num máximo de soluções repetidas
+    iteracoes = 400
 
 
 #[------------- Abrimos o arquivo, e obtemos o número de nós do grafo
@@ -207,7 +202,6 @@ feromDepositado = matrizZeros           # Inicializamos ela em 0
 
 melhorSolucao = []
 melhorDistancia = float('inf')
-
 #[------------- Loop de execução do algoritmo:
 for i in range(iteracoes):
     feromDepositado = matrizZeros
@@ -216,24 +210,23 @@ for i in range(iteracoes):
     for j in range(numeroNos):  # E calculamos 𝑝𝑖,𝑗(𝑡) para cada caminho
         matrizIntensidades.append(somaIntensidades(alpha, beta, matrizFeromonio[j], matriz[j]))
     
-    print(" ")
-    print("[------ Iteração ", i, " ------]")
-    print("Menor solucao da iteracao:")
-    print(melhorSolucao)
-    print("Distancia percorrida:")
-    print(melhorDistancia)
-    print(" ")
-    print("-- Matriz Feromonios --")
-    for linha in matrizFeromonio:
-        print(linha)
-    print("[------------------------------]")
+    #print(" ")
+    #print("[------ Iteração ", i, " ------]")
+    #print("Menor solucao da iteracao:")
+    #print(melhorSolucao)
+    #print("Distancia percorrida:")
+    #print(melhorDistancia)
+    #print(" ")
+    #print("-- Matriz Feromonios --")
+    #for linha in matrizFeromonio:
+    #    print(linha)
+    #print("[------------------------------]")
     
     for j in range(nFormigas):
         #print("Foi 1")
         if randomFlag == True:              # Caso o usuário querer que o ponto de partida/chegada seja aleatório...
             partida = random.randint(0, numeroNos - 1)  # O teto faz parte do conjunto de saída
-
-        formiguinha = Formiga(partida, i)   # Instanciamos uma formiga, com ponto de partida no nó partida e a id i
+        formiguinha = Formiga(partida, j)   # Instanciamos uma formiga, com ponto de partida no nó partida e a id i
         atual = partida
         prox = 0
 
@@ -257,9 +250,10 @@ for i in range(iteracoes):
                 limite += 1
             
         #[----- Formiguinha completou sua viagem
-        print(formiguinha.visitados)
-        print(formiguinha.solucao)
-        print(formiguinha.custo)
+        print("\n[---- Formiga ", formiguinha.id, " completou sua ", i+1, "° viagem ----]")
+        print("---- Ela viajou por", formiguinha.solucao)
+        print("---- E caminhou um total de ", formiguinha.custo, " metros ----")
+
         #[----- Hora de depositar os feromônios da furmiga na matriz feromDepositado[][]
         formiguinha.depositaFeromonio(formiguinha, feromDepositado, Q)
         
@@ -267,17 +261,18 @@ for i in range(iteracoes):
             melhorDistancia = formiguinha.custo
             melhorSolucao = formiguinha.solucao
     
-    print("--------Vamos ver os feromonios depositados------------------")
-    for linha in feromDepositado:
-        print(linha)
+    #print("--------Vamos ver os feromonios depositados------------------")
+    #for linha in feromDepositado:
+    #    print(linha)
     
     #[----- Todas as furmigas caminharam pelo grafo e depositaram seus feromônios em feromDepositado!
     atualizaFeromonio(matrizFeromonio, feromDepositado, sigma)
     
-    
-print("[------ Soluções: ------]")
-print(melhorSolucao)
-print(melhorDistancia)
+
+print("\n\n")
+print("[------ A Colônia Terminou de Caminhar ------]")
+print("[---- O melhor caminho foi: ", melhorSolucao)
+print("[---- Que custou ", melhorDistancia, " metros")
 
 #return 0
 #}
