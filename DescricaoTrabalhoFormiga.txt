@@ -14,8 +14,10 @@ TRABALHO OC - Colônia de Formigas + Caixeiro Viajante.
 	* E com o tempo diferentes vértices vao ter diferentes feromônios
 	* E em toda iteração passamos pela matriz 2 para decair os feromônios
 	* Depois de x iterações é pra termos a melhor solução
-	IMPORTANTE - Feromonios:	
+	IMPORTANTE - Feromonios:
 		* Quando eles sao atualizados, é o feromônio antigo que se esvai
 		  E só depois que é somado o que as formigas deixaram na iteração atual
 		  (ou seja, teremos mais uma matriz: que armazena os novos feromonios,
 		  e daí esvaímos os antigos na M2, e somamos com os F novos da M3)
+	* Cada formiga armazena as cidades na qual já passou (não pode repetir)
+	* A cidade escolhida é definida pelo método da roleta
