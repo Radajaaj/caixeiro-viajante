@@ -146,43 +146,43 @@ def inicializamatrizes(n, matriz):
 #[------------- Vamos pegar os parâmetros do usuário:
 op = input("Deseja usar parâmetros padrão? [1 - Sim] [~1 - Não]\nR: ") 
 
-if op == 1:
+if op != "1":
     #[------ Primeiro, pegamos o endereço do arquivo com o grafo:
     f = open(input("Insira o endereço do arquivo com o grafo (ex: Grafos/Entrada 10.txt)\nR: "), "r") # f vai ser um ponteiro para o arquivo aberto (?)
 
     #[------ Agora, pedimos pro usuário definir o número de formigas
-    nFormigas = input("Quantas formigas terão na colônia?\nR: ")
+    nFormigas = int(input("Quantas formigas terão na colônia?\nR: "))
     
     #[------ Agora, pedimos pro usuário definir o número de formigas
-    iteracoes = input("Qual vai ser o numero maximo de iteracoes?\nR: ")
+    iteracoes = int(input("Qual vai ser o numero maximo de iteracoes?\nR: "))
 
     #[------ E definimos o nó de saída das formigas
     randomFlag = False
-    partida = input("As formigas sairão de um único nó [0], ou de um nó aleatório [1]?\nR: ")
+    partida = int(input("As formigas sairão de um único nó [0], ou de um nó aleatório [1]?\nR: "))
     if partida == 0:
-        partida = input("De que nó as formigas sairão?\nR: ")
+        partida = int(input("De que nó as formigas sairão?\nR: "))
     else:
         randomFlag = True
 
     #[------ E também pedimos pro usuário definir as variáveis
-    alpha = input("Defina o valor de Alpha (Sugestão = 1)\nR: ")    # Importancia do feromonio
-    beta  = input("Defina o valor de Beta (Sugestão = 1)\nR: ")     # Importancia da distancia
-    sigma = input("Defina o valor de Sigma (Sugestão = 0.01)\nR: ") # Fator de esvaecimento do feromônio
-    Tij   = input("Defina o valor de Ti,j (Sugestão = 0.1)\nR: ")
-    Q     = input("Defina o valor de Q (Sugestão = 10)\nR: ")       # Constante de atualização do feromônio
+    alpha = float(input("Defina o valor de Alpha (Sugestão = 1)\nR: "))    # Importancia do feromonio
+    beta  = float(input("Defina o valor de Beta (Sugestão = 1)\nR: ")) # Importancia da distancia
+    sigma = float(input("Defina o valor de Sigma (Sugestão = 0.01)\nR: ")) # Fator de esvaecimento do feromônio
+    #Tij   = input("Defina o valor de Ti,j (Sugestão = 0.1)\nR: ")
+    Q     = float(input("Defina o valor de Q (Sugestão = 10)\nR: "))       # Constante de atualização do feromônio
     
 
     #[------ Também pedimos para ele especificar uma convergência prematura
-    convPrematura = input("Quantas soluções repetidas definem uma convergência prematura (Sugestão = 10)\nR: ")
+    convPrematura = int(input("Quantas soluções repetidas definem uma convergência prematura (Sugestão = 10)\nR: "))
 else:
     #[------ Parâmetros genéricos
     f = open("Grafos/Entrada 10.txt", "r")  
     nFormigas = 2                       # Número de formigas
-    randomFlag = False
+    randomFlag = True
     partida = 0                         # Ponto de partida
-    alpha, beta, sigma, Tij, Q = 1, 1, 0.01, 0.1, 10    #Parâmetros
-    convPrematura = 10                  # Num máximo de soluções repetidas
-    iteracoes = 1
+    alpha, beta, sigma, Q = 1, 1, 0.01, 10    #Parâmetros
+    convPrematura = 500                  # Num máximo de soluções repetidas
+    iteracoes = 200
 
 
 #[------------- Abrimos o arquivo, e obtemos o número de nós do grafo
