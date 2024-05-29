@@ -1,0 +1,59 @@
+Probabilidade de escolher cada caminho:
+    - P i,m (t) = Caminho curto
+    - P i,M (t) = Caminho longo
+
+Quantidade de feromonio em cada caminho:
+    - ɸ 𝑖,m (𝑡) = curto
+    - ɸ 𝑖,𝑀 (𝑡) = longo
+
+
+A probabilidade de escolher o caminho + curto é:        (FORMULA PRA QUANDO TEM 2 CAMINHOS)
+                               (k + ɸ 𝑖,m (𝑡))^(α)
+    P i,m (t) = ---------------------------------------------------
+                  (k + ɸ 𝑖,m (𝑡))^(α) + (k + ɸ 𝑖,M (𝑡))^(α)
+    
+    k = Distancia da rota?
+    α = variavel fixa
+
+    Na verdade é bem simples, é o metodo da roleta:
+    1 - Função que calcula funcao(k, matrizFeromonio[x][y], α)
+    2 - Dai fica Pimt = funcao(curto)/(funcao(curto)+funcao(longo))
+
+    3 - Nao vao ter so 2 caminhos, então: 
+            Loop for para calcular a soma total do que vai ser dividido
+            Loop for para fazer um vetor com o peso de cada um (funcao/somatotal)
+            Dai roda aquela função do ::rand pra escolher entre eles
+            E retorna o caminho escolhido
+
+
+Probabilidade da formiga k atravessar o arco i,j no instante t  (FORMULA PARA INFINITOS CAMINHOS) - [[[V.A.M.O.S U.S.A.R E.S.S.A]]]
+                   (𝜏𝑖,𝑗(𝑡))^(α) * (𝜂𝑖,𝑗(𝑡))^(β)
+    𝑝𝑖,𝑗(𝑡) = -------------------------------------------------
+                 soma[(𝜏𝑖,𝑗(𝑡))^(α) * (𝜂𝑖,𝑗(𝑡))^(β)]
+
+𝑝𝑖,𝑗(𝑡) é a probabilidade da formiga k atravessar o arco i,j no instante t
+𝜏𝑖,𝑗(𝑡) é a quantidade de feromônio depositado na trilha i,j no instante t (intensidade da trilha)
+𝜂𝑖,𝑗(𝑡) é o fator de visibilidade (distância) de cada trajeto que a formiga k pode selecionar (= 1/distancia ? acho que nao)
+α = peso da intensidade da trilha
+β = peso da visibilidade da trilha
+soma = somatório da função de cima, para cada caminho possível
+
+
+
+Feromônios depositados:
+               Q
+    ∆𝜏k i,j = ----      = O quanto a formiga k vai deixar de feromônio no caminho i,j
+               dk
+    
+    Q  = Constante de atualização de feromônio
+    dk = Somatório das distâncias percorridas pela formiga k
+
+
+Atualizacao matriz de feromonios:
+                (1 - σ) * 𝜏𝑖,𝑗 (t-1) + soma[∆𝜏𝑖,𝑗 (t)]
+    𝜏𝑖,𝑗 (t) = --------------
+    
+    𝜏𝑖,𝑗 (t) feromonio presente no caminho i,j após a atualização
+    σ       fator de esvaecimento
+    𝜏𝑖,𝑗 (t-1) feromonio presente no inicio da iteração atual
+    ∆𝜏𝑖,𝑗 (t)  feromonios deixados pelas formigas na iteração atual

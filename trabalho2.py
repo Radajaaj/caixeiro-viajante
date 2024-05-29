@@ -19,24 +19,24 @@ class Formiga:
         self.solucao.append(partida)
         self.custo = 0              #Custo da solução encontrada pela formiga
     #@staticmethod
-    #def evaporaferomonio(matrizflinha, matrizfauxlinha):  #isso deve ser uma função no #escopo externo e não um metodo da classe formiga.
+    #def evaporaferomonio(linhaFeromonio, matrizfauxlinha):  #isso deve ser uma função no #escopo externo e não um metodo da classe formiga.
     #    print('ToDo')                                       #Func que vai evaporar o #feromonio da matriz
 #
     #@staticmethod
-    #def addferomonio(self, matrizflinha,matrizfauxlinha):   #Feromonio é soltado pela #formiga na matrizflinha
+    #def addferomonio(self, linhaFeromonio,matrizfauxlinha):   #Feromonio é soltado pela #formiga na linhaFeromonio
     #    print('ToDo')
 
     @staticmethod
-    def calcularota(self, matrizdlinha, matrizflinha):      # Atualmente, as rotas são calculadas por força bruta. É quase impossível achar uma rota válida para grafos grandes
+    def calcularota(self, linhaDistancia, linhaFeromonio, feromDepositado):      # Atualmente, as rotas são calculadas por força bruta. É quase impossível achar uma rota válida para grafos grandes
         probabilidades = []
         possiveis = []
-        for i in range(len(matrizdlinha)):
+        for i in range(len(linhaDistancia)):
             if i not in self.visitados:
-                if matrizdlinha[i] > 0:
+                if linhaDistancia[i] > 0:
                     possiveis.append(i)  #nó possivel é adicionado a lista de nós possíveis
         i=0
         for i in range(len(possiveis)): #percorre a lista de nós possiveis e calcula as probabilidades
-            probabilidades.append(self.calculaprob(self, possiveis[i], 1, matrizdlinha, matrizflinha))
+            probabilidades.append(self.calculaprob(self, possiveis[i], 1, linhaDistancia, linhaFeromonio))
             # acho que não é a melhor maneira de fazer isso, mas precisamos saber quais nós foram selecionados
             # e temos que saber associar a probabilidade a esse nó, essa foi a maneira que consegui pensar
 
@@ -52,17 +52,17 @@ class Formiga:
             selecionado = random.choices(possiveis, weights=probabilidades, k=1)
             self.solucao.append(selecionado[0])
             self.visitados.append(selecionado[0])  #random.choices retorna uma lista de 1 posição
-            self.custo += matrizdlinha[selecionado[0]]  #acha na matriz de distância o indice do nó selecionado, e soma o custo
+            self.custo += linhaDistancia[selecionado[0]]  #acha na matriz de distância o indice do nó selecionado, e soma o custo
             return selecionado[0]
 
     @staticmethod
-    def calculaprob(self, s, b, matrizdlinha, matrizflinha):
+    def calculaprob(self, s, b, linhaDistancia, linhaFeromonio):
         """
         r = indice do nó atual
         s = indice do nó destino
         b = peso do feromônio
-        matrizdlinha = linha de indice r da matriz de distância
-        matrizflinha = linha de indice r da matriz de feromônio
+        linhaDistancia = linha de indice r da matriz de distância
+        linhaFeromonio = linha de indice r da matriz de feromônio
         """
         somad = 0
         somaf = 0
@@ -73,12 +73,12 @@ class Formiga:
         todos os pontos acessíveis de r, tudo isso elevado a b
         retorna probabilidade da formiga escolher escolher a rota vindo de r indo para s
         """
-        for i in range( len(matrizdlinha)):  #fazer os somatorios
-            if matrizdlinha[i] > 0:
+        for i in range( len(linhaDistancia)):  #fazer os somatorios
+            if linhaDistancia[i] > 0:
                 if i not in self.visitados:  #até achar um valor > 0 que não foi visitado
-                    somad = somad + 1 / matrizdlinha[i]  #se encontrar, adiciona 1/d no somatorio
-                    somaf = somaf + matrizflinha[i]  #adiciona o feromonio ao somatorio tambem
-        probabilidade = pow((matrizflinha[s] * (1 / matrizdlinha[s])), b) / pow(somad * somaf, b)
+                    somad = somad + 1 / linhaDistancia[i]  #se encontrar, adiciona 1/d no somatorio
+                    somaf = somaf + linhaFeromonio[i]  #adiciona o feromonio ao somatorio tambem
+        probabilidade = pow((linhaFeromonio[s] * (1 / linhaDistancia[s])), b) / pow(somad * somaf, b)
         return probabilidade
 
 
@@ -104,6 +104,9 @@ if op == 1:
 
     #[------ Agora, pedimos pro usuário definir o número de formigas
     nFormigas = input("Quantas formigas terão na colônia?\nR: ")
+    
+    #[------ Agora, pedimos pro usuário definir o número de formigas
+    iteracoes = input("Qual vai ser o numero maximo de iteracoes?\nR: ")
 
     #[------ E definimos o nó de saída das formigas
     randomFlag = False
@@ -125,12 +128,13 @@ if op == 1:
     convPrematura = input("Quantas soluções repetidas definem uma convergência prematura (Sugestão = 10)\nR: ")
 else:
     #[------ Parâmetros genéricos
-    f = open("Grafos/Entrada 10.txt", "r")  
+    f = open("Grafos/Entrada 50.txt", "r")  
     nFormigas = 10                       # Número de formigas
     randomFlag = True
-    partida = 4                         # Ponto de partida
+    partida = 0                         # Ponto de partida
     alpha, beta, sigma, Tij, Q = 1, 1, 0.01, 0.1, 10    #Parâmetros
     convPrematura = 10                  # Num máximo de soluções repetidas
+    iteracoes = 100
 
 
 #[------------- Abrimos o arquivo, e obtemos o número de nós do grafo
@@ -149,27 +153,44 @@ matriz = ini[0]                         # A função retorna duas matrizes: Uma 
 matrizFeromonio = ini[1]                # E oura com a intensidade dos feromônios iniciada em 
 feromDepositado = [[0 for _ in range(numeroNos)] for _ in range(numeroNos)] # Inicializamos ela em 0
 
+melhorSolucao = []
+melhorDistancia = float('inf')
 
 #[------------- Loop de execução do algoritmo:
-for i in range(nFormigas):
-    
-    if randomFlag == True:              # Caso o usuário querer que o ponto de partida/chegada seja aleatório...
-        partida = random.randint(0, numeroNos - 1)  # O teto faz parte do conjunto de saída
-        
-    formiguinha = Formiga(partida, i)   # Instanciamos uma formiga, com ponto de partida no nó partida e a id i
-    atual = partida
-    prox = 0
-    
-    limite = 0                          # Ajuda a encontrar caminhos sem solução
+for i in range(iteracoes):
+    print("[------ Iteração ", i, " ------]")
+    print("Menor solucao da iteracao:")
+    print(melhorSolucao)
+    print("Distancia percorrida:")
+    print(melhorDistancia)
+    for i in range(nFormigas):
 
-    while prox != "finished":           # A formiga caminha pelo grafo, até achar um caminho válido
-        prox = formiguinha.calcularota(formiguinha, matriz[atual], matrizFeromonio[atual]) #(instancia da formiga, ponto de partida, feromonio do ponto de partida)
-        atual = prox
-        if limite == 10:
-            limite = random.randint(0, numeroNos - 1)   # Se a formiguinha se demorar demais num ponto de saída, ela vai tentar começar por outro
-        else:
-            limite += 1
-    
-    print(formiguinha.visitados)
-    print(formiguinha.solucao)
-    print(formiguinha.custo)
+        if randomFlag == True:              # Caso o usuário querer que o ponto de partida/chegada seja aleatório...
+            partida = random.randint(0, numeroNos - 1)  # O teto faz parte do conjunto de saída
+
+        formiguinha = Formiga(partida, i)   # Instanciamos uma formiga, com ponto de partida no nó partida e a id i
+        atual = partida
+        prox = 0
+
+        limite = 0                          # Ajuda a encontrar caminhos sem solução
+
+        while prox != "finished":           # A formiga caminha pelo grafo, até achar um caminho válido
+            prox = formiguinha.calcularota(formiguinha, matriz[atual], matrizFeromonio[atual], feromDepositado[atual]) #(instancia da formiga, ponto de partida, feromonio do ponto de partida)
+            atual = prox
+            #print("Limite: ", limite)
+            if limite == 80:
+                limite = 0
+                partida = random.randint(0, numeroNos - 1)   # Se a formiguinha se demorar demais num ponto de saída, ela vai tentar começar por outro
+            else:
+                limite += 1
+
+        #print(formiguinha.visitados)
+        #print(formiguinha.solucao)
+        #print(formiguinha.custo)
+        if formiguinha.custo < melhorDistancia:
+            melhorDistancia = formiguinha.custo
+            melhorSolucao = formiguinha.solucao
+            
+print("[------ Soluções: ------]")
+print(melhorSolucao)
+print(melhorDistancia)
