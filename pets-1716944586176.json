@@ -1,0 +1,14 @@
+[
+  {
+    "color": "orange",
+    "type": "turtle",
+    "size": "nano",
+    "name": "Sherlock"
+  },
+  {
+    "color": "gray",
+    "type": "rocky",
+    "size": "nano",
+    "name": "Turing"
+  }
+]
