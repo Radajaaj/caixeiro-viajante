@@ -26,13 +26,13 @@ A probabilidade de escolher o caminho + curto é:        (FORMULA PRA QUANDO TEM
             E retorna o caminho escolhido
 
 
-Probabilidade da formiga k atravessar o arco i,j no instante t  (FORMULA PARA INFINITOS CAMINHOS) - [[[V.A.M.O.S U.S.A.R E.S.S.A]]]
+Probabilidade da formiga k atravessar o arco i,j no instante t  (FORMULA PARA INFINITOS CAMINHOS) - [[[V.A.M.O.S. U.S.A.R. E.S.S.A.]]]
                    (𝜏𝑖,𝑗(𝑡))^(α) * (𝜂𝑖,𝑗(𝑡))^(β)
     𝑝𝑖,𝑗(𝑡) = -------------------------------------------------
                  soma[(𝜏𝑖,𝑗(𝑡))^(α) * (𝜂𝑖,𝑗(𝑡))^(β)]
 
 𝑝𝑖,𝑗(𝑡) é a probabilidade da formiga k atravessar o arco i,j no instante t
-𝜏𝑖,𝑗(𝑡) é a quantidade de feromônio depositado na trilha i,j no instante t (intensidade da trilha)
+𝜏𝑖,𝑗(𝑡) é a quantidade de feromônio depositado na trilha i,j no instante t (intensidade da trilha) (1/distancia)
 𝜂𝑖,𝑗(𝑡) é o fator de visibilidade (distância) de cada trajeto que a formiga k pode selecionar (= 1/distancia ? acho que nao)
 α = peso da intensidade da trilha
 β = peso da visibilidade da trilha
